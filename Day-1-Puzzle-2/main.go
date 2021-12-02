@@ -1,16 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
+
+	util "github.com/jademonkey/advent-of-code-2021/robcommon"
 )
 
 func main() {
 	fmt.Println(">Grabbing input")
-	inputList, err := readInput()
+	inputList, err := util.ReadInputAsIntArray("input")
 	if err != nil {
 		fmt.Printf("Got error: %v\n", err)
 		os.Exit(1)
@@ -22,36 +21,6 @@ func main() {
 		os.Exit(2)
 	}
 	fmt.Printf("Answer: %v\n", answer)
-}
-
-func readInput() ([]int, error) {
-	var output []int
-	fileH, err := os.Open("input")
-	if err != nil {
-		return nil, err
-	}
-	defer fileH.Close()
-	fmt.Printf("Opened Input file\n")
-
-	fileReader := bufio.NewReader(fileH)
-	for err == nil {
-		var line string
-		var number int
-		line, err = fileReader.ReadString('\n')
-		if err != nil {
-			fmt.Printf("Failed to read line %v\n", err)
-			break
-		}
-		line = strings.Trim(line, "\n\r ")
-		number, err = strconv.Atoi(line)
-		if err != nil {
-			fmt.Printf("Failed to convert int %v\n", err)
-			break
-		}
-		output = append(output, number)
-	}
-
-	return output, nil
 }
 
 func calcSolution2(inputList []int) (int, error) {
