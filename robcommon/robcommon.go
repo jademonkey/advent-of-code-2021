@@ -108,3 +108,75 @@ func ReadInputAsDirectionDistance(filename string) ([]DirDist, error) {
 
 	return output, nil
 }
+
+func ReadInputAsBinaryArray(filename string) ([][]bool, error) {
+	var output [][]bool
+	fileH, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer fileH.Close()
+	log.Printf("Opened Input file\n")
+
+	fileReader := bufio.NewReader(fileH)
+	for err == nil {
+		var line string
+		var lineoutput []bool
+		line, err = fileReader.ReadString('\n')
+		if err != nil {
+			log.Printf("Failed to read line %v\n", err)
+			break
+		}
+		line = strings.Trim(line, "\n\r ")
+
+		// Now parse character by character building an array
+		for _, c := range line {
+			if c == '0' {
+				lineoutput = append(lineoutput, false)
+			} else if c == '1' {
+				lineoutput = append(lineoutput, true)
+			} else {
+				log.Printf("Unknown character '%v'\n", c)
+				break
+			}
+		}
+
+		// add on to the end
+		output = append(output, lineoutput)
+	}
+
+	return output, nil
+}
+
+func BitArrayToNumber(input []bool) int {
+	starting := 1
+	solution := 0
+	for i := len(input) - 1; i >= 0; i-- {
+		if input[i] {
+			solution += starting
+		}
+
+		starting *= 2
+	}
+
+	return solution
+}
+
+func CompareBitArraysEqual(first, second [][]bool) bool {
+	if len(first) != len(second) {
+		return false
+	}
+
+	for i := 0; i < len(first); i++ {
+		if len(first[i]) != len(second[i]) {
+			return false
+		}
+		for d := 0; d < len(first[i]); d++ {
+			if first[i][d] != second[i][d] {
+				return false
+			}
+		}
+	}
+
+	return true
+}
