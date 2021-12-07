@@ -2,6 +2,7 @@ package robcommon
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -179,4 +180,49 @@ func CompareBitArraysEqual(first, second [][]bool) bool {
 	}
 
 	return true
+}
+
+func ReadCSIntList(filename string) ([]uint64, error) {
+	var finalNumbers []uint64
+	var err error
+
+	fileH, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer fileH.Close()
+	log.Printf("Opened Input file\n")
+
+	fileReader := bufio.NewReader(fileH)
+
+	for {
+		var line string
+		line, err = fileReader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				err = nil
+				break
+			}
+			log.Printf("Failed to read line %v\n", err)
+			break
+		}
+		line = strings.Trim(line, "\n\r ")
+		if len(line) == 0 {
+			// skip blank lines
+			continue
+		}
+
+		numbers := strings.Split(line, ",")
+
+		for _, numS := range numbers {
+			thisNum, err := strconv.Atoi(numS)
+			if err != nil {
+				log.Printf("Failed to convert int %v - %v\n", numS, err)
+				break
+			}
+			finalNumbers = append(finalNumbers, uint64(thisNum))
+		}
+	}
+
+	return finalNumbers, nil
 }
