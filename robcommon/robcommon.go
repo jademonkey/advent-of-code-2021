@@ -182,7 +182,27 @@ func CompareBitArraysEqual(first, second [][]bool) bool {
 	return true
 }
 
+func Uint642DArrayconvertToInt2DArray(toConvert [][]uint64) [][]int {
+	var toReturn [][]int
+	for _, uintN := range toConvert {
+		toReturn = append(toReturn, Uint64ArrayconvertToIntArray(uintN))
+	}
+	return toReturn
+}
+
+func Uint64ArrayconvertToIntArray(toConvert []uint64) []int {
+	var toReturn []int
+	for _, uintN := range toConvert {
+		toReturn = append(toReturn, int(uintN))
+	}
+	return toReturn
+}
+
 func ReadCSIntList(filename string) ([]uint64, error) {
+	return ReadIntList(filename, ",")
+}
+
+func ReadIntList(filename string, sep string) ([]uint64, error) {
 	var finalNumbers []uint64
 	var err error
 
@@ -212,7 +232,7 @@ func ReadCSIntList(filename string) ([]uint64, error) {
 			continue
 		}
 
-		numbers := strings.Split(line, ",")
+		numbers := strings.Split(line, sep)
 
 		for _, numS := range numbers {
 			thisNum, err := strconv.Atoi(numS)
@@ -225,4 +245,67 @@ func ReadCSIntList(filename string) ([]uint64, error) {
 	}
 
 	return finalNumbers, nil
+}
+
+func ReadHeightMap(filename string) ([][]int, error) {
+	var finalHM [][]int
+	var err error
+	fileH, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer fileH.Close()
+	log.Printf("Opened Input file\n")
+
+	fileReader := bufio.NewReader(fileH)
+	for {
+		var line string
+		line, err = fileReader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				err = nil
+				break
+			}
+			log.Printf("Failed to read line %v\n", err)
+			break
+		}
+		line = strings.Trim(line, "\n\r ")
+		if len(line) == 0 {
+			// skip blank lines
+			continue
+		}
+
+		// Read each number and weeee
+		var toAppend []int
+		for _, num := range line {
+			convNum, err := strconv.Atoi(string(num))
+			if err != nil {
+				return nil, err
+			}
+			toAppend = append(toAppend, convNum)
+		}
+
+		finalHM = append(finalHM, toAppend)
+	}
+
+	return finalHM, nil
+}
+
+func CompareHeightMap(one, two [][]int) bool {
+	if one == nil || two == nil {
+		return false
+	}
+	if len(one) != len(two) {
+		return false
+	}
+
+	for i := 0; i < len(one); i++ {
+		for i2 := 0; i2 < len(one[i]); i2++ {
+			if one[i][i2] != two[i][i2] {
+				return false
+			}
+		}
+	}
+
+	return true
 }

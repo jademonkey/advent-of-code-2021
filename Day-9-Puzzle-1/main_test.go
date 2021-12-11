@@ -2,12 +2,14 @@ package main
 
 import (
 	"testing"
+
+	"github.com/jademonkey/advent-of-code-2021/robcommon"
 )
 
 func TestCalculateSolution(t *testing.T) {
 	expectedAnswer := 15
 
-	Input, err := ReadHeightMap("testInput")
+	Input, err := robcommon.ReadHeightMap("testInput")
 	if err != nil {
 		t.Fatalf("ReadSegmentDisplays error'd: %v", err)
 	}
@@ -27,12 +29,12 @@ func TestReadHeightMap(t *testing.T) {
 
 	expectedAnswer := [][]int{{2, 1, 9, 9, 9, 4, 3, 2, 1, 0}, {3, 9, 8, 7, 8, 9, 4, 9, 2, 1}, {9, 8, 5, 6, 7, 8, 9, 8, 9, 2}, {8, 7, 6, 7, 8, 9, 6, 7, 8, 9}, {9, 8, 9, 9, 9, 6, 5, 6, 7, 8}}
 
-	answer, err := ReadHeightMap("testInput")
+	answer, err := robcommon.ReadHeightMap("testInput")
 	if err != nil {
 		t.Fatalf("ReadHeightMap error'd: %v", err)
 	}
 
-	if !CompareHeightMap(expectedAnswer, answer) {
+	if !robcommon.CompareHeightMap(expectedAnswer, answer) {
 		t.Errorf("Read wrong\nExpected: %v\n     Got: %v", expectedAnswer, answer)
 	}
 }
@@ -43,12 +45,12 @@ func TestReadHeightMap2(t *testing.T) {
 		{5, 4, 3, 5, 7, 9, 9, 6, 5, 4, 0, 1, 2, 4, 5, 9, 9, 4, 3, 4, 5, 6, 7, 8, 9, 5, 1, 9, 8, 9, 4, 3, 0, 1, 2, 3, 4, 6, 7, 9, 0, 9, 8, 6, 5, 4, 5, 6, 9, 8, 9, 8, 9, 2, 1, 2, 3, 4, 5, 8, 9, 7, 6, 5, 3, 2, 1, 2, 3, 4, 5, 8, 9, 8, 7, 8, 5, 4, 3, 2, 1, 3, 5, 6, 7, 8, 9, 9, 8, 8, 6, 4, 3, 4, 9, 9, 0, 1, 3, 5},
 		{6, 6, 5, 6, 9, 8, 7, 6, 4, 3, 2, 3, 4, 7, 6, 7, 8, 9, 2, 3, 4, 5, 9, 9, 5, 4, 3, 9, 7, 8, 9, 2, 1, 3, 3, 4, 5, 8, 9, 9, 9, 9, 8, 7, 6, 5, 6, 9, 9, 7, 8, 7, 8, 9, 2, 3, 4, 5, 6, 9, 9, 8, 7, 6, 5, 4, 2, 3, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 5, 6, 7, 8, 9, 2, 9, 6}}
 
-	answer, err := ReadHeightMap("testInput2")
+	answer, err := robcommon.ReadHeightMap("testInput2")
 	if err != nil {
 		t.Fatalf("ReadHeightMap error'd: %v", err)
 	}
 
-	if !CompareHeightMap(expectedAnswer, answer) {
+	if !robcommon.CompareHeightMap(expectedAnswer, answer) {
 		t.Errorf("Read wrong\nExpected: %v\n     Got: %v", expectedAnswer, answer)
 	}
 }
@@ -69,23 +71,4 @@ func TestCalculateSolution2(t *testing.T) {
 	if expectedAnswer != answer {
 		t.Errorf("Answer wrong\nExpected: %v\n     Got: %v", expectedAnswer, answer)
 	}
-}
-
-func CompareHeightMap(one, two [][]int) bool {
-	if one == nil || two == nil {
-		return false
-	}
-	if len(one) != len(two) {
-		return false
-	}
-
-	for i := 0; i < len(one); i++ {
-		for i2 := 0; i2 < len(one[i]); i2++ {
-			if one[i][i2] != two[i][i2] {
-				return false
-			}
-		}
-	}
-
-	return true
 }

@@ -30,18 +30,24 @@ func calcSolution(lines [][]int, iterations int) (int, error) {
 		return 0, fmt.Errorf("lines array was nil")
 	}
 	var solution int
+	var totalOcts int
 
-	for steps := 0; steps < iterations; steps++ {
+	for r := 0; r < len(lines); r++ {
+		for c := 0; c < len(lines[0]); c++ {
+			totalOcts++
+		}
+	}
+
+	for steps := 0; ; steps++ {
+		var flashesThisStep int
+
 		// First increment everything and flash as necessary
 		for r := 0; r < len(lines); r++ {
 			for c := 0; c < len(lines[0]); c++ {
 				lines[r][c]++
 				if lines[r][c] == 10 {
-					var flashes int
-					solution++ // Mark this flash
 					// FLASH TIME recursion
-					lines, flashes = doFlash(lines, r, c)
-					solution += flashes
+					lines, _ = doFlash(lines, r, c)
 				}
 			}
 		}
@@ -51,10 +57,17 @@ func calcSolution(lines [][]int, iterations int) (int, error) {
 			for c := 0; c < len(lines[0]); c++ {
 				if lines[r][c] > 9 {
 					lines[r][c] = 0
+					flashesThisStep++
 				}
 			}
 		}
-		// Go to the next step
+		// Check if ALL the buggers flashed at once and add to the solution list
+		log.Printf("Step: %v Flashes: %v/%v", steps, flashesThisStep, totalOcts)
+		if flashesThisStep == totalOcts {
+			solution = (steps + 1)
+			break
+		}
+		// Go to the next step if not
 	}
 
 	return solution, nil

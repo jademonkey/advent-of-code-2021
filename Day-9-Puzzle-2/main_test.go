@@ -2,12 +2,14 @@ package main
 
 import (
 	"testing"
+
+	"github.com/jademonkey/advent-of-code-2021/robcommon"
 )
 
 func TestCalculateSolution(t *testing.T) {
 	expectedAnswer := 1134
 
-	Input, err := ReadHeightMap("testInput")
+	Input, err := robcommon.ReadHeightMap("testInput")
 	if err != nil {
 		t.Fatalf("ReadSegmentDisplays error'd: %v", err)
 	}
@@ -27,7 +29,7 @@ func TestReadHeightMap(t *testing.T) {
 
 	expectedAnswer := [][]int{{2, 1, 9, 9, 9, 4, 3, 2, 1, 0}, {3, 9, 8, 7, 8, 9, 4, 9, 2, 1}, {9, 8, 5, 6, 7, 8, 9, 8, 9, 2}, {8, 7, 6, 7, 8, 9, 6, 7, 8, 9}, {9, 8, 9, 9, 9, 6, 5, 6, 7, 8}}
 
-	answer, err := ReadHeightMap("testInput")
+	answer, err := robcommon.ReadHeightMap("testInput")
 	if err != nil {
 		t.Fatalf("ReadHeightMap error'd: %v", err)
 	}

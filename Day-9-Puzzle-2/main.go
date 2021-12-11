@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"sort"
-	"strconv"
-	"strings"
+
+	"github.com/jademonkey/advent-of-code-2021/robcommon"
 )
 
 type coords struct {
@@ -19,7 +17,7 @@ type coords struct {
 
 func main() {
 	log.Println(">Grabbing input")
-	numbers, err := ReadHeightMap("input")
+	numbers, err := robcommon.ReadHeightMap("input")
 	if err != nil {
 		log.Printf("Got error: %v\n", err)
 		os.Exit(1)
@@ -127,48 +125,4 @@ func containsRowCol(row, col int, thisArray []coords) bool {
 		}
 	}
 	return false
-}
-
-func ReadHeightMap(filename string) ([][]int, error) {
-	var finalHM [][]int
-	var err error
-	fileH, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer fileH.Close()
-	log.Printf("Opened Input file\n")
-
-	fileReader := bufio.NewReader(fileH)
-	for {
-		var line string
-		line, err = fileReader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				err = nil
-				break
-			}
-			log.Printf("Failed to read line %v\n", err)
-			break
-		}
-		line = strings.Trim(line, "\n\r ")
-		if len(line) == 0 {
-			// skip blank lines
-			continue
-		}
-
-		// Read each number and weeee
-		var toAppend []int
-		for _, num := range line {
-			convNum, err := strconv.Atoi(string(num))
-			if err != nil {
-				return nil, err
-			}
-			toAppend = append(toAppend, convNum)
-		}
-
-		finalHM = append(finalHM, toAppend)
-	}
-
-	return finalHM, nil
 }

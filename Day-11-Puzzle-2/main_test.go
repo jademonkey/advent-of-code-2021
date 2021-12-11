@@ -7,7 +7,7 @@ import (
 )
 
 func TestCalculateSolution(t *testing.T) {
-	expectedAnswer := 1656
+	expectedAnswer := 195
 
 	Input, err := util.ReadHeightMap("testInput")
 	if err != nil {
@@ -15,24 +15,6 @@ func TestCalculateSolution(t *testing.T) {
 	}
 
 	answer, err := calcSolution(Input, 100)
-	if err != nil {
-		t.Fatalf("calcSolution error'd: %v", err)
-	}
-
-	if expectedAnswer != answer {
-		t.Errorf("Answer wrong\nExpected: %v\n     Got: %v", expectedAnswer, answer)
-	}
-}
-
-func TestCalculateSolutionShort(t *testing.T) {
-	expectedAnswer := 9
-
-	Input, err := util.ReadHeightMap("testInputShort")
-	if err != nil {
-		t.Fatalf("ReadChunkMap error'd: %v", err)
-	}
-
-	answer, err := calcSolution(Input, 2)
 	if err != nil {
 		t.Fatalf("calcSolution error'd: %v", err)
 	}
