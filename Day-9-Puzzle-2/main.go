@@ -6,9 +6,16 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
+
+type coords struct {
+	Row   int
+	Col   int
+	Value int
+}
 
 func main() {
 	log.Println(">Grabbing input")
@@ -31,7 +38,8 @@ func calcSolution(numbers [][]int) (int, error) {
 		return 0, fmt.Errorf("numbers array was nil")
 	}
 	var solution int
-	var lowPoints []int
+	var lowPoints []coords
+	var totalSizes []int
 
 	for r := 0; r < len(numbers); r++ {
 		for c := 0; c < len(numbers[0]); c++ {
@@ -55,17 +63,70 @@ func calcSolution(numbers [][]int) (int, error) {
 			}
 
 			// all higher!
-			lowPoints = append(lowPoints, thisNum)
+			lowPoints = append(lowPoints, coords{Row: r, Col: c, Value: thisNum})
 		}
 	}
 
-	log.Printf("All low points! %v", lowPoints)
-	// Now total everything
-	for _, num := range lowPoints {
-		solution += (num + 1)
+	// Now iterate through the low points creating the basin
+	for _, firstLow := range lowPoints {
+		thisBasin := []coords{firstLow}
+		thisBasin = buildBasin(thisBasin, firstLow.Row, firstLow.Col, numbers)
+		// Now add the size
+		totalSizes = append(totalSizes, len(thisBasin))
 	}
 
+	sort.Slice(totalSizes, func(i, j int) bool {
+		return totalSizes[i] > totalSizes[j]
+	})
+
+	solution = totalSizes[0] * totalSizes[1] * totalSizes[2]
+
 	return solution, nil
+}
+
+func buildBasin(currentArray []coords, ThisRow, ThisColumn int, set [][]int) []coords {
+	// Check up
+	if ThisRow != 0 && set[(ThisRow - 1)][ThisColumn] != 9 {
+		if !containsRowCol(ThisRow-1, ThisColumn, currentArray) {
+			currentArray = append(currentArray, coords{Row: ThisRow - 1, Col: ThisColumn, Value: set[(ThisRow - 1)][ThisColumn]})
+			currentArray = buildBasin(currentArray, ThisRow-1, ThisColumn, set)
+		}
+	}
+
+	// check down
+	if ThisRow != (len(set)-1) && set[(ThisRow + 1)][ThisColumn] != 9 {
+		if !containsRowCol(ThisRow+1, ThisColumn, currentArray) {
+			currentArray = append(currentArray, coords{Row: ThisRow + 1, Col: ThisColumn, Value: set[(ThisRow + 1)][ThisColumn]})
+			currentArray = buildBasin(currentArray, ThisRow+1, ThisColumn, set)
+		}
+	}
+
+	// Check left
+	if ThisColumn != 0 && set[ThisRow][ThisColumn-1] != 9 {
+		if !containsRowCol(ThisRow, ThisColumn-1, currentArray) {
+			currentArray = append(currentArray, coords{Row: ThisRow, Col: ThisColumn - 1, Value: set[ThisRow][ThisColumn-1]})
+			currentArray = buildBasin(currentArray, ThisRow, ThisColumn-1, set)
+		}
+	}
+
+	// Check right
+	if ThisColumn != (len(set[ThisRow])-1) && set[ThisRow][ThisColumn+1] != 9 {
+		if !containsRowCol(ThisRow, ThisColumn+1, currentArray) {
+			currentArray = append(currentArray, coords{Row: ThisRow, Col: ThisColumn + 1, Value: set[ThisRow][ThisColumn+1]})
+			currentArray = buildBasin(currentArray, ThisRow, ThisColumn+1, set)
+		}
+	}
+
+	return currentArray
+}
+
+func containsRowCol(row, col int, thisArray []coords) bool {
+	for _, co := range thisArray {
+		if co.Col == col && co.Row == row {
+			return true
+		}
+	}
+	return false
 }
 
 func ReadHeightMap(filename string) ([][]int, error) {
